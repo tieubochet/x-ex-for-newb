@@ -1,6 +1,6 @@
-/* --- START OF FILE style.css (UPGRADED WITH POPUP STYLES) --- */
+/* --- START OF FILE style.css (REVERTED TO INLINE STYLES) --- */
 
-/* --- Icon Button --- */
+/* --- Icon Button (Giữ nguyên) --- */
 .gemini-translate-btn-wrapper {
     display: flex;
     align-items: center;
@@ -20,19 +20,19 @@
     align-items: center;
     justify-content: center;
     transition: background-color 0.2s;
-    color: rgb(113, 118, 123); /* Màu icon mặc định của X.com */
+    color: rgb(113, 118, 123);
 }
 
 .gemini-translate-btn:hover {
-    background-color: rgba(29, 155, 240, 0.1); /* Nền xanh mờ khi hover */
-    color: rgb(29, 155, 240); /* Icon màu xanh khi hover */
+    background-color: rgba(29, 155, 240, 0.1);
+    color: rgb(29, 155, 240);
 }
 
 .gemini-translate-btn:disabled {
     cursor: not-allowed;
 }
 
-/* Spinner Animation */
+/* Spinner Animation (Giữ nguyên) */
 .gemini-spinner {
     animation: rotate 1s linear infinite;
 }
@@ -49,119 +49,27 @@
 }
 
 
-/* --- Popup Styles --- */
-
-.gemini-translate-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(91, 112, 131, 0.4); /* Màu overlay của X.com */
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.gemini-translate-modal {
-    width: 90%;
-    max-width: 600px;
-    border-radius: 16px;
-    box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
-    padding: 0;
-    z-index: 1001;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    
-    /* Màu cho Light & Dark Mode */
-    background-color: rgb(255, 255, 255);
-    color: rgb(15, 20, 25);
-}
-
-/* Dark mode styles */
-@media (prefers-color-scheme: dark) {
-    .gemini-translate-modal {
-        background-color: rgb(0, 0, 0);
-        color: rgb(247, 249, 249);
-    }
-}
-
-.gemini-modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-}
-
-.gemini-modal-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.gemini-modal-close {
-    background: none;
-    border: none;
-    font-size: 24px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    cursor: pointer;
-    color: inherit;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-}
-.gemini-modal-close:hover {
-    background-color: rgba(128, 128, 128, 0.2);
-}
-
-.gemini-modal-content {
-    padding: 4px 16px 20px 16px;
-    white-space: pre-wrap;
-    line-height: 1.5;
-    font-size: 15px;
-    border-top: 1px solid rgb(239, 243, 244);
-}
-@media (prefers-color-scheme: dark) {
-    .gemini-modal-content {
-        border-top: 1px solid rgb(47, 51, 54);
-    }
-}
-
-.gemini-modal-suggestion {
-    padding: 16px;
-    border-top: 1px solid rgb(239, 243, 244);
-}
-@media (prefers-color-scheme: dark) {
-    .gemini-modal-suggestion {
-        border-top: 1px solid rgb(47, 51, 54);
-    }
-}
-
-.gemini-suggestion-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: bold;
-    font-size: 15px;
-    margin-bottom: 12px;
-    color: rgb(83, 100, 113);
-}
-
-.gemini-suggestion-box {
-    background-color: rgb(247, 249, 249);
+/* --- Inline Translation Container (Style mới) --- */
+.gemini-translation-container {
+    margin: 12px 0; /* Khoảng cách trên dưới */
     padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
+    border: 1px solid rgb(239, 243, 244); /* Viền xám nhạt */
+    border-radius: 12px;
+    font-size: 15px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    color: inherit; /* Tự động đổi màu chữ theo theme light/dark */
 }
+
+/* Style cho Dark mode */
 @media (prefers-color-scheme: dark) {
-    .gemini-suggestion-box {
-        background-color: rgb(22, 24, 28);
+    .gemini-translation-container {
+        border: 1px solid rgb(47, 51, 54); /* Viền xám tối */
     }
+}
+
+.gemini-translation-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: rgb(83, 100, 113); /* Màu xám cho tiêu đề */
 }
