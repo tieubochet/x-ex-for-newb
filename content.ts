@@ -1,7 +1,4 @@
-// Fix: Removed '/// <reference types="chrome" />' to resolve "Cannot find type definition file" error.
-
 // This file is compiled to content.js
-import type { Message, TranslationResponse } from './types';
 
 // Fix: Add chrome declaration to resolve "Cannot find name 'chrome'" errors.
 declare const chrome: any;
@@ -44,12 +41,12 @@ const styleSheet = document.createElement("style");
 styleSheet.innerText = styles;
 document.head.appendChild(styleSheet);
 
-const addTranslateButton = (tweetElement: HTMLElement) => {
+const addTranslateButton = (tweetElement) => {
     if (tweetElement.querySelector('.gemini-translate-btn')) {
         return; // Button already exists
     }
 
-    const textElement = tweetElement.querySelector('div[data-testid="tweetText"]') as HTMLElement;
+    const textElement = tweetElement.querySelector('div[data-testid="tweetText"]');
     const actionBar = tweetElement.querySelector('div[role="group"]');
 
     if (!textElement || !actionBar || !textElement.innerText.trim()) {
@@ -68,10 +65,9 @@ const addTranslateButton = (tweetElement: HTMLElement) => {
         button.disabled = true;
         button.innerText = 'Translating...';
 
-        const message: Message = { action: "translate", text: originalText };
+        const message = { action: "translate", text: originalText };
 
-        // Fix: 'Cannot find name 'chrome'' resolved by adding a triple-slash directive at the top of the file.
-        chrome.runtime.sendMessage(message, (response: TranslationResponse) => {
+        chrome.runtime.sendMessage(message, (response) => {
             button.disabled = false;
             button.innerText = 'Translate';
 
@@ -104,7 +100,7 @@ const addTranslateButton = (tweetElement: HTMLElement) => {
 
 const processTweets = () => {
     const tweets = document.querySelectorAll('article[data-testid="tweet"]');
-    tweets.forEach(tweet => addTranslateButton(tweet as HTMLElement));
+    tweets.forEach(tweet => addTranslateButton(tweet));
 };
 
 const observer = new MutationObserver((mutations) => {

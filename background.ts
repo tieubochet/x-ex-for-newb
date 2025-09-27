@@ -1,10 +1,7 @@
-// Fix: Removed '/// <reference types="chrome" />' to resolve "Cannot find type definition file" error.
-
 // This file is compiled to background.js
 // Note: You need to install @google/genai for this to work in a real project setup.
 // For this environment, we assume the library is available.
 import { GoogleGenAI } from "https://aistudiocdn.com/@google/genai@^1.21.0";
-import type { Message, TranslationResponse } from "./types";
 
 // Fix: Add chrome declaration to resolve "Cannot find name 'chrome'" errors.
 declare const chrome: any;
@@ -12,7 +9,7 @@ declare const chrome: any;
 const GEMINI_MODEL = "gemini-2.5-flash";
 
 // Fix: Refactored to get API key from process.env.API_KEY instead of chrome.storage, per coding guidelines.
-async function translateText(text: string): Promise<string> {
+async function translateText(text) {
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
     throw new Error("Gemini API key is not set in environment variables.");
@@ -28,23 +25,21 @@ async function translateText(text: string): Promise<string> {
   return response.text;
 }
 
-// Fix: 'Cannot find name 'chrome'' resolved by adding a triple-slash directive at the top.
-// The logic is also updated to use process.env.API_KEY via translateText function, removing chrome.storage.
-chrome.runtime.onMessage.addListener((request: Message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "translate") {
     if (!request.text) {
-        sendResponse({ error: "No text provided to translate." } as TranslationResponse);
+        sendResponse({ error: "No text provided to translate." });
         return;
     }
       
     (async () => {
       try {
         const translatedText = await translateText(request.text);
-        sendResponse({ translation: translatedText } as TranslationResponse);
+        sendResponse({ translation: translatedText });
       } catch (error) {
         console.error("Gemini API Error:", error);
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred during translation.";
-        sendResponse({ error: `Error: ${errorMessage}` } as TranslationResponse);
+        sendResponse({ error: `Error: ${errorMessage}` });
       }
     })();
 
@@ -53,7 +48,6 @@ chrome.runtime.onMessage.addListener((request: Message, sender, sendResponse) =>
 });
 
 // Open options page on install
-// Fix: 'Cannot find name 'chrome'' resolved by adding a triple-slash directive at the top.
 chrome.runtime.onInstalled.addListener((details) => {
     if (details.reason === 'install') {
         chrome.runtime.openOptionsPage();
