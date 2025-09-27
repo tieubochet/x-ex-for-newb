@@ -1,50 +1,29 @@
-
 {
   "manifest_version": 3,
-  "name": "X Extension",
-  "version": "1.1",
-  "description": "X Extension for Newbie",
+  "name": "X - Extension for Newbie",
+  "version": "1.0",
+  "description": "Extension for Newbie - Ver 0.0.1",
+  "permissions": [
+    "activeTab",
+    "webRequest"
+  ],
   "host_permissions": [
-    "https://generativelanguage.googleapis.com/",
-    "https://aistudiocdn.com/"
+    "https://generativelanguage.googleapis.com/*"
   ],
-  "options_page": "index.html",
-  "background": {
-    "service_worker": "background.js",
-    "type": "module"
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "*://*.x.com/*",
-        "*://*.twitter.com/*"
-      ],
-      "js": [
-        "content.js"
-      ]
-    }
-  ],
-  "action": {
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
-    },
-    "default_title": "X Extension for Newbie"
-  },
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
   "web_accessible_resources": [
     {
-      "resources": [
-        "icons/icon16.png",
-        "icons/icon48.png",
-        "icons/icon128.png"
-      ],
-      "matches": ["<all_urls>"]
+      "resources": ["keys.txt", "promts.txt"],
+      "matches": ["https://x.com/*"]
     }
-  ]
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://x.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "icons": {
+    "48": "icon.jpeg"
+  }
 }
