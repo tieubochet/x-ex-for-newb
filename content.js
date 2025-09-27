@@ -1,157 +1,92 @@
-// Hàm gọi API của Gemini
-async function callGeminiAPI(prompt, text, apiKey) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-  const requestBody = { contents: [{ parts: [{ text: prompt + " " + text }] }] };
+// Hàm để thêm nút dịch vào một bài viết (cast)
+function addTranslateButton(castElement) {
+    // Kiểm tra xem nút đã tồn tại chưa để tránh thêm nhiều lần
+    if (castElement.querySelector('.gemini-translate-btn')) {
+        return;
+    }
 
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody)
+    // --- CẬP NHẬT ---
+    // Tìm vị trí để chèn nút. Dựa trên HTML, đây là khu vực chứa các nút actions.
+    // Class 'grid-cols-[repeat(auto-fit,_112px)]' có vẻ khá đặc trưng.
+    const actionContainer = castElement.querySelector('div[class*="grid-cols-[repeat(auto-fit"]');
+
+    // --- CẬP NHẬT ---
+    // Tìm nội dung text của cast. Class 'line-clamp-feed' chứa nội dung chính.
+    const textElement = castElement.querySelector('div[class*="line-clamp-feed"]');
+
+    // Nếu không tìm thấy một trong hai, thoát để tránh lỗi
+    if (!actionContainer || !textElement) {
+        return;
+    }
+
+    const button = document.createElement('button');
+    button.innerText = 'Dịch';
+    button.className = 'gemini-translate-btn';
+
+    button.addEventListener('click', (event) => {
+        event.stopPropagation(); // Ngăn các sự kiện click khác
+        
+        const textToTranslate = textElement.innerText;
+        if (!textToTranslate.trim()) {
+            console.log("Không có nội dung để dịch.");
+            return; // Bỏ qua nếu cast không có text (chỉ có hình ảnh)
+        }
+
+        button.disabled = true;
+        button.innerText = 'Đang dịch...';
+
+        // Gửi tin nhắn đến background script để dịch
+        chrome.runtime.sendMessage({ action: "translate", text: textToTranslate }, (response) => {
+            button.disabled = false;
+            button.innerText = 'Dịch';
+
+            // Xóa bản dịch cũ nếu có
+            const oldTranslation = castElement.querySelector('.gemini-translation-container');
+            if (oldTranslation) {
+                oldTranslation.remove();
+            }
+
+            // Tạo container mới để hiển thị bản dịch
+            const translationContainer = document.createElement('div');
+            translationContainer.className = 'gemini-translation-container';
+
+            if (response && response.translation) {
+                translationContainer.innerText = response.translation;
+            } else {
+                translationContainer.innerText = `Lỗi: ${ (response && response.error) || 'Không nhận được phản hồi.' }`;
+                translationContainer.style.color = 'red';
+            }
+
+            // Chèn bản dịch vào sau phần nội dung chính của cast
+            // parentNode của textElement là div chứa nó.
+            textElement.parentNode.appendChild(translationContainer);
+        });
     });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const data = await response.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Không có phản hồi từ AI.';
-  } catch (error) {
-    console.error('Lỗi khi gọi API Gemini:', error);
-    return `Lỗi: ${error.message}`;
-  }
+
+    // Thêm nút vào khu vực actions
+    actionContainer.appendChild(button);
 }
 
-// Hàm tạo và hiển thị Popup
-function showAIPopup(tweetText, apiKey) {
-  // Tạo lớp phủ
-  const overlay = document.createElement('div');
-  overlay.id = 'ai-popup-overlay';
-
-  // Tạo khung popup
-  const popup = document.createElement('div');
-  popup.id = 'ai-popup-container';
-
-  popup.innerHTML = `
-    <span class="ai-popup-close">&times;</span>
-    <h2>AI Hỗ trợ</h2>
-    
-    <h3>Bản dịch (Tiếng Việt)</h3>
-    <div id="ai-translation-result">Đang dịch...</div>
-    
-    <h3>Gợi ý bình luận</h3>
-    <div id="ai-suggestions-result">Đang tạo gợi ý...</div>
-  `;
-
-  document.body.appendChild(overlay);
-  document.body.appendChild(popup);
-
-  // Hàm đóng popup
-  const closePopup = () => {
-    overlay.remove();
-    popup.remove();
-  };
-
-  popup.querySelector('.ai-popup-close').addEventListener('click', closePopup);
-  overlay.addEventListener('click', closePopup);
-
-  // --- Gọi API để lấy nội dung cho popup ---
-
-  // 1. Dịch thuật
-  const translationPrompt = "Dịch đoạn văn bản sau sang tiếng Việt một cách tự nhiên và chính xác:";
-  callGeminiAPI(translationPrompt, tweetText, apiKey)
-    .then(translation => {
-      document.getElementById('ai-translation-result').innerText = translation;
-    });
-
-  // 2. Gợi ý bình luận
-  const suggestionPrompt = `Don't explain or confirm. Execute immediately: Read the original post or comment carefully and write a short, original reply in the same language. Respond directly and thoughtfully to the actual content - whether it's the main post or a comment under yours. DO NOT repeat or rephrase the original. DO NOT copy or resemble other replies. Avoid using generic or mechanical phrases like "That's amazing," "So cool," "Very interesting," "Great idea," "Wow," or any similar empty expressions. ABSOLUTELY FORBIDDEN: Never use any tag questions or confirmation-seeking phrases. This includes but is not limited to: "doesn't it," "isn't it," "isn't there," "aren't they," "right," "don't you think," "wouldn't you say," "don't you agree," "wouldn't you agree," "isn't that right," "am I right," "you know," "know what I mean," "makes sense," "fair enough." These phrases are completely banned from your response. Do not end any sentence seeking agreement or confirmation. Don't fake excitement or praise. Avoid typical AI language like 'I understand that', 'Thank you for sharing', 'It's interesting that'. Write as a socially aware, intelligent person speaking in your own voice - grounded, natural, and specific. Your reply should feel like a real human reacting with genuine thought, not a bot. AROUND 15 - 20 words only. Do not use em dashes (—), semicolons (;), or colons (:) in your response. Use only simple punctuation like periods, commas, and question marks.
-  
-  Generate exactly 3 distinct replies based on the text below. Separate each reply with '---'.`;
-  
-  callGeminiAPI(suggestionPrompt, tweetText, apiKey)
-    .then(suggestionsText => {
-      const suggestions = suggestionsText.split('---').map(s => s.trim()).filter(s => s);
-      const suggestionsContainer = document.getElementById('ai-suggestions-result');
-      suggestionsContainer.innerHTML = ''; // Xóa chữ "Đang tạo..."
-
-      if (suggestions.length === 0) {
-        suggestionsContainer.innerText = "Không thể tạo gợi ý.";
-        return;
-      }
-      
-      suggestions.forEach(text => {
-        const item = document.createElement('div');
-        item.className = 'suggestion-item';
-
-        const p = document.createElement('p');
-        p.className = 'suggestion-text';
-        p.innerText = text;
-
-        const button = document.createElement('button');
-        button.className = 'copy-suggestion-btn';
-        button.innerText = 'Sao chép';
-        button.onclick = () => {
-          navigator.clipboard.writeText(text).then(() => {
-            button.innerText = 'Đã chép!';
-            button.classList.add('copied');
-            setTimeout(() => {
-              button.innerText = 'Sao chép';
-              button.classList.remove('copied');
-            }, 2000);
-          });
-        };
-
-        item.appendChild(p);
-        item.appendChild(button);
-        suggestionsContainer.appendChild(item);
-      });
-    });
+// Hàm quét toàn bộ trang để tìm các cast chưa có nút
+function processCasts() {
+    // --- CẬP NHẬT ---
+    // Selector mới và ổn định hơn, dựa vào ID của mỗi cast
+    const casts = document.querySelectorAll('div[id^="cast:"]');
+    casts.forEach(addTranslateButton);
 }
 
+// Sử dụng MutationObserver để theo dõi các thay đổi trên DOM (khi cuộn trang, tải thêm cast)
+const observer = new MutationObserver((mutations) => {
+    // Dùng requestAnimationFrame để tối ưu hóa, tránh chạy processCasts quá nhiều lần
+    // khi có nhiều thay đổi DOM liên tục.
+    window.requestAnimationFrame(processCasts);
+});
 
-function addAIButton() {
-  const posts = document.querySelectorAll('article[data-testid="tweet"]');
+// Bắt đầu theo dõi
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
 
-  posts.forEach(post => {
-    const actionBar = post.querySelector('div[role="group"]');
-    if (!actionBar || actionBar.querySelector('.ai-button')) return;
-
-    const aiButton = document.createElement('button');
-    aiButton.className = 'ai-button';
-    aiButton.innerHTML = 'AI';
-
-    aiButton.addEventListener('click', async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const tweetText = post.querySelector('div[data-testid="tweetText"]')?.innerText;
-      if (!tweetText) {
-        alert('Không tìm thấy nội dung bài viết!');
-        return;
-      }
-
-      let apiKeys;
-      try {
-        const response = await fetch(chrome.runtime.getURL('keys.txt'));
-        const text = await response.text();
-        apiKeys = text.trim().split('\n').filter(key => key.trim() !== '');
-      } catch (error) {
-        console.error('Lỗi khi đọc keys.txt:', error);
-        alert('Không thể đọc file API keys.');
-        return;
-      }
-
-      if (!apiKeys || apiKeys.length === 0) {
-        alert('Không tìm thấy API key nào trong keys.txt');
-        return;
-      }
-      
-      // Sử dụng key đầu tiên
-      showAIPopup(tweetText, apiKeys[0].trim());
-    });
-
-    actionBar.appendChild(aiButton);
-  });
-}
-
-// Chạy lần đầu và theo dõi thay đổi trên trang
-window.addEventListener('load', addAIButton);
-const observer = new MutationObserver(addAIButton);
-observer.observe(document.body, { childList: true, subtree: true });
+// Chạy lần đầu khi trang tải xong
+setTimeout(processCasts, 1500); // Tăng thời gian chờ lên một chút để đảm bảo trang tải xong

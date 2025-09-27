@@ -1,29 +1,36 @@
 {
   "manifest_version": 3,
-  "name": "X - Extension for Newbie",
+  "name": "Farcaster Gemini Translator",
   "version": "1.0",
-  "description": "Extension for Newbie - Ver 0.0.1",
+  "description": "Dịch các bài viết trên Farcaster bằng Google Gemini.",
   "permissions": [
-    "activeTab",
-    "webRequest"
+    "storage"  // Để lưu API key
   ],
   "host_permissions": [
-    "https://generativelanguage.googleapis.com/*"
+    "https://generativelanguage.googleapis.com/" // Cho phép gọi API Gemini
   ],
-  "web_accessible_resources": [
-    {
-      "resources": ["keys.txt", "promts.txt"],
-      "matches": ["https://x.com/*"]
-    }
-  ],
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
-      "matches": ["https://x.com/*"],
+      "matches": ["*://*.farcaster.xyz/*"],
       "js": ["content.js"],
-      "css": ["styles.css"]
+      "css": ["style.css"]
     }
   ],
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Farcaster Gemini Translator"
+  },
   "icons": {
-    "48": "icon.jpeg"
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   }
 }

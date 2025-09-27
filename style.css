@@ -1,0 +1,42 @@
+.gemini-translate-btn {
+    background-color: #8a63d2; /* Màu tím của Farcaster */
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 9999px; /* Bo tròn như các nút khác */
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    /* Dùng grid layout nên không cần margin lớn nữa */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px; /* Chiều cao tương tự các nút actions */
+    width: fit-content;
+}
+
+.gemini-translate-btn:hover {
+    opacity: 1;
+}
+
+.gemini-translate-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.gemini-translation-container {
+    background-color: #f0f0f0;
+    border-left: 3px solid #8a63d2;
+    padding: 10px;
+    margin-top: 12px; /* Tăng khoảng cách với text gốc */
+    border-radius: 4px;
+    white-space: pre-wrap; /* Giữ nguyên định dạng xuống dòng */
+    font-style: italic;
+    color: #333;
+    /* Áp dụng cho dark mode */
+    --tw-bg-opacity: 1;
+    background-color: rgba(30, 31, 34, var(--tw-bg-opacity));
+    color: #c9cdd2;
+}
