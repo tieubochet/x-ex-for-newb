@@ -1,3 +1,4 @@
+// This file is compiled to background.js
 // Note: You need to install @google/genai for this to work in a real project setup.
 // For this environment, we assume the library is available.
 import { GoogleGenAI } from "https://aistudiocdn.com/@google/genai@^1.21.0";

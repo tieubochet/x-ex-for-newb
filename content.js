@@ -1,8 +1,5 @@
 // This file is compiled to content.js
 
-// Fix: Add chrome declaration to resolve "Cannot find name 'chrome'" errors.
-declare const chrome: any;
-
 // We cannot use Tailwind directly, so we define CSS that mimics its style.
 const styles = `
 .gemini-translate-btn {
