@@ -1,43 +1,167 @@
-// --- START OF FILE style.css ---
+/* --- START OF FILE style.css (UPGRADED WITH POPUP STYLES) --- */
 
-.gemini-translate-btn {
-    background-color: transparent; /* Nền trong suốt */
-    color: rgb(113, 118, 123); /* Màu xám giống các icon khác */
-    border: none;
-    padding: 0 8px; /* Giảm padding */
-    font-size: 13px; /* Cỡ chữ giống UI của X.com */
-    font-weight: 500;
-    border-radius: 9999px;
-    cursor: pointer;
-    opacity: 0.8;
-    transition: all 0.2s;
+/* --- Icon Button --- */
+.gemini-translate-btn-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.gemini-translate-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    width: 36px;
     height: 36px;
-    margin-left: 12px; /* Thêm khoảng cách với nút bên trái */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    color: rgb(113, 118, 123); /* Màu icon mặc định của X.com */
 }
 
 .gemini-translate-btn:hover {
-    opacity: 1;
-    color: #1d9bf0; /* Chuyển màu xanh khi hover */
-    background-color: rgba(29, 155, 240, 0.1); /* Thêm nền xanh mờ */
+    background-color: rgba(29, 155, 240, 0.1); /* Nền xanh mờ khi hover */
+    color: rgb(29, 155, 240); /* Icon màu xanh khi hover */
 }
 
 .gemini-translate-btn:disabled {
-    color: #cccccc;
     cursor: not-allowed;
 }
 
-.gemini-translation-container {
-    border-left: 3px solid #1d9bf0; /* Màu xanh của X.com */
-    padding: 12px;
-    margin-top: 12px;
-    border-radius: 4px;
-    white-space: pre-wrap;
-    font-style: italic;
+/* Spinner Animation */
+.gemini-spinner {
+    animation: rotate 1s linear infinite;
+}
+.gemini-spinner circle {
+    stroke: rgb(29, 155, 240);
+    stroke-linecap: round;
+    animation: dash 1.5s ease-in-out infinite;
+}
+@keyframes rotate { 100% { transform: rotate(360deg); } }
+@keyframes dash {
+  0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
+  50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; }
+  100% { stroke-dasharray: 90, 150; stroke-dashoffset: -124; }
+}
+
+
+/* --- Popup Styles --- */
+
+.gemini-translate-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(91, 112, 131, 0.4); /* Màu overlay của X.com */
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gemini-translate-modal {
+    width: 90%;
+    max-width: 600px;
+    border-radius: 16px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+    padding: 0;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     
-    /* Style cho cả Light mode và Dark mode */
-    background-color: rgba(128, 128, 128, 0.1);
-    color: inherit; /* Kế thừa màu chữ của trang */
+    /* Màu cho Light & Dark Mode */
+    background-color: rgb(255, 255, 255);
+    color: rgb(15, 20, 25);
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .gemini-translate-modal {
+        background-color: rgb(0, 0, 0);
+        color: rgb(247, 249, 249);
+    }
+}
+
+.gemini-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+}
+
+.gemini-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.gemini-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+.gemini-modal-close:hover {
+    background-color: rgba(128, 128, 128, 0.2);
+}
+
+.gemini-modal-content {
+    padding: 4px 16px 20px 16px;
+    white-space: pre-wrap;
+    line-height: 1.5;
+    font-size: 15px;
+    border-top: 1px solid rgb(239, 243, 244);
+}
+@media (prefers-color-scheme: dark) {
+    .gemini-modal-content {
+        border-top: 1px solid rgb(47, 51, 54);
+    }
+}
+
+.gemini-modal-suggestion {
+    padding: 16px;
+    border-top: 1px solid rgb(239, 243, 244);
+}
+@media (prefers-color-scheme: dark) {
+    .gemini-modal-suggestion {
+        border-top: 1px solid rgb(47, 51, 54);
+    }
+}
+
+.gemini-suggestion-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    font-size: 15px;
+    margin-bottom: 12px;
+    color: rgb(83, 100, 113);
+}
+
+.gemini-suggestion-box {
+    background-color: rgb(247, 249, 249);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+@media (prefers-color-scheme: dark) {
+    .gemini-suggestion-box {
+        background-color: rgb(22, 24, 28);
+    }
 }
