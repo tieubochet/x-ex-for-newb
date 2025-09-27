@@ -1,20 +1,22 @@
-// Hàm để thêm nút dịch vào một bài viết (cast)
-function addTranslateButton(castElement) {
+// --- START OF FILE content.js ---
+
+// Hàm để thêm nút dịch vào một tweet
+function addTranslateButtonToTweet(tweetElement) {
     // Kiểm tra xem nút đã tồn tại chưa để tránh thêm nhiều lần
-    if (castElement.querySelector('.gemini-translate-btn')) {
+    if (tweetElement.querySelector('.gemini-translate-btn')) {
         return;
     }
 
-    // --- CẬP NHẬT ---
-    // Tìm vị trí để chèn nút. Dựa trên HTML, đây là khu vực chứa các nút actions.
-    // Class 'grid-cols-[repeat(auto-fit,_112px)]' có vẻ khá đặc trưng.
-    const actionContainer = castElement.querySelector('div[class*="grid-cols-[repeat(auto-fit"]');
+    // --- CẬP NHẬT CHO X.COM ---
+    // Tìm vị trí để chèn nút. Đây là khu vực chứa các nút actions (reply, retweet, like).
+    // Nó thường là một div có role="group".
+    const actionContainer = tweetElement.querySelector('div[role="group"]');
 
-    // --- CẬP NHẬT ---
-    // Tìm nội dung text của cast. Class 'line-clamp-feed' chứa nội dung chính.
-    const textElement = castElement.querySelector('div[class*="line-clamp-feed"]');
+    // --- CẬP NHẬT CHO X.COM ---
+    // Tìm nội dung text của tweet. X.com dùng data-testid="tweetText".
+    const textElement = tweetElement.querySelector('div[data-testid="tweetText"]');
 
-    // Nếu không tìm thấy một trong hai, thoát để tránh lỗi
+    // Nếu không tìm thấy một trong hai, thoát để tránh lỗi (ví dụ: tweet chỉ có video)
     if (!actionContainer || !textElement) {
         return;
     }
@@ -29,7 +31,7 @@ function addTranslateButton(castElement) {
         const textToTranslate = textElement.innerText;
         if (!textToTranslate.trim()) {
             console.log("Không có nội dung để dịch.");
-            return; // Bỏ qua nếu cast không có text (chỉ có hình ảnh)
+            return;
         }
 
         button.disabled = true;
@@ -41,7 +43,7 @@ function addTranslateButton(castElement) {
             button.innerText = 'Dịch';
 
             // Xóa bản dịch cũ nếu có
-            const oldTranslation = castElement.querySelector('.gemini-translation-container');
+            const oldTranslation = tweetElement.querySelector('.gemini-translation-container');
             if (oldTranslation) {
                 oldTranslation.remove();
             }
@@ -57,8 +59,7 @@ function addTranslateButton(castElement) {
                 translationContainer.style.color = 'red';
             }
 
-            // Chèn bản dịch vào sau phần nội dung chính của cast
-            // parentNode của textElement là div chứa nó.
+            // Chèn bản dịch vào sau phần nội dung chính của tweet
             textElement.parentNode.appendChild(translationContainer);
         });
     });
@@ -67,19 +68,19 @@ function addTranslateButton(castElement) {
     actionContainer.appendChild(button);
 }
 
-// Hàm quét toàn bộ trang để tìm các cast chưa có nút
-function processCasts() {
-    // --- CẬP NHẬT ---
-    // Selector mới và ổn định hơn, dựa vào ID của mỗi cast
-    const casts = document.querySelectorAll('div[id^="cast:"]');
-    casts.forEach(addTranslateButton);
+// Hàm quét toàn bộ trang để tìm các tweet chưa có nút
+function processTweets() {
+    // --- CẬP NHẬT CHO X.COM ---
+    // Selector mới và ổn định hơn, dựa vào thuộc tính data-testid của mỗi tweet.
+    // Mỗi tweet được bao bọc trong một thẻ <article>.
+    const tweets = document.querySelectorAll('article[data-testid="tweet"]');
+    tweets.forEach(addTranslateButtonToTweet);
 }
 
-// Sử dụng MutationObserver để theo dõi các thay đổi trên DOM (khi cuộn trang, tải thêm cast)
+// Sử dụng MutationObserver để theo dõi các thay đổi trên DOM (khi cuộn trang, tải thêm tweet)
 const observer = new MutationObserver((mutations) => {
-    // Dùng requestAnimationFrame để tối ưu hóa, tránh chạy processCasts quá nhiều lần
-    // khi có nhiều thay đổi DOM liên tục.
-    window.requestAnimationFrame(processCasts);
+    // Dùng requestAnimationFrame để tối ưu hóa, tránh chạy processTweets quá nhiều lần.
+    window.requestAnimationFrame(processTweets);
 });
 
 // Bắt đầu theo dõi
@@ -89,4 +90,4 @@ observer.observe(document.body, {
 });
 
 // Chạy lần đầu khi trang tải xong
-setTimeout(processCasts, 1500); // Tăng thời gian chờ lên một chút để đảm bảo trang tải xong
+setTimeout(processTweets, 1500); // Giữ nguyên để đảm bảo trang tải xong

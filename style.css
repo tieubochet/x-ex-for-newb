@@ -1,42 +1,43 @@
+// --- START OF FILE style.css ---
+
 .gemini-translate-btn {
-    background-color: #8a63d2; /* Màu tím của Farcaster */
-    color: white;
+    background-color: transparent; /* Nền trong suốt */
+    color: rgb(113, 118, 123); /* Màu xám giống các icon khác */
     border: none;
-    padding: 4px 8px;
-    font-size: 12px;
+    padding: 0 8px; /* Giảm padding */
+    font-size: 13px; /* Cỡ chữ giống UI của X.com */
     font-weight: 500;
-    border-radius: 9999px; /* Bo tròn như các nút khác */
+    border-radius: 9999px;
     cursor: pointer;
     opacity: 0.8;
-    transition: opacity 0.2s;
-    /* Dùng grid layout nên không cần margin lớn nữa */
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 36px; /* Chiều cao tương tự các nút actions */
-    width: fit-content;
+    height: 36px;
+    margin-left: 12px; /* Thêm khoảng cách với nút bên trái */
 }
 
 .gemini-translate-btn:hover {
     opacity: 1;
+    color: #1d9bf0; /* Chuyển màu xanh khi hover */
+    background-color: rgba(29, 155, 240, 0.1); /* Thêm nền xanh mờ */
 }
 
 .gemini-translate-btn:disabled {
-    background-color: #cccccc;
+    color: #cccccc;
     cursor: not-allowed;
 }
 
 .gemini-translation-container {
-    background-color: #f0f0f0;
-    border-left: 3px solid #8a63d2;
-    padding: 10px;
-    margin-top: 12px; /* Tăng khoảng cách với text gốc */
+    border-left: 3px solid #1d9bf0; /* Màu xanh của X.com */
+    padding: 12px;
+    margin-top: 12px;
     border-radius: 4px;
-    white-space: pre-wrap; /* Giữ nguyên định dạng xuống dòng */
+    white-space: pre-wrap;
     font-style: italic;
-    color: #333;
-    /* Áp dụng cho dark mode */
-    --tw-bg-opacity: 1;
-    background-color: rgba(30, 31, 34, var(--tw-bg-opacity));
-    color: #c9cdd2;
+    
+    /* Style cho cả Light mode và Dark mode */
+    background-color: rgba(128, 128, 128, 0.1);
+    color: inherit; /* Kế thừa màu chữ của trang */
 }
