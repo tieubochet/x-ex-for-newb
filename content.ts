@@ -1,4 +1,4 @@
-/// <reference types="chrome" />
+// Fix: Removed '/// <reference types="chrome" />' to resolve "Cannot find type definition file" error.
 
 // This file is compiled to content.js
 import type { Message, TranslationResponse } from './types';

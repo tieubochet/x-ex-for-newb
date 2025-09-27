@@ -4,11 +4,9 @@
   "name": "X Extension",
   "version": "1.1",
   "description": "X Extension for Newbie",
-  "permissions": [
-    "storage"
-  ],
   "host_permissions": [
-    "https://generativelanguage.googleapis.com/"
+    "https://generativelanguage.googleapis.com/",
+    "https://aistudiocdn.com/"
   ],
   "options_page": "index.html",
   "background": {

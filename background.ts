@@ -1,9 +1,9 @@
-/// <reference types="chrome" />
+// Fix: Removed '/// <reference types="chrome" />' to resolve "Cannot find type definition file" error.
 
 // This file is compiled to background.js
 // Note: You need to install @google/genai for this to work in a real project setup.
 // For this environment, we assume the library is available.
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI } from "https://aistudiocdn.com/@google/genai@^1.21.0";
 import type { Message, TranslationResponse } from "./types";
 
 // Fix: Add chrome declaration to resolve "Cannot find name 'chrome'" errors.
