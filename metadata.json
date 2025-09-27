@@ -1,0 +1,5 @@
+{
+  "name": "X Extension for Newbie",
+  "description": "A browser extension to translate tweets on X.com (formerly Twitter) into Vietnamese using the Google Gemini API. Set your API key in the options page.",
+  "requestFramePermissions": []
+}
