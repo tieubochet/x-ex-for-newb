@@ -1,14 +1,10 @@
-// This file is compiled to background.js
 // Note: You need to install @google/genai for this to work in a real project setup.
 // For this environment, we assume the library is available.
 import { GoogleGenAI } from "https://aistudiocdn.com/@google/genai@^1.21.0";
 
-// Fix: Add chrome declaration to resolve "Cannot find name 'chrome'" errors.
-declare const chrome: any;
-
 const GEMINI_MODEL = "gemini-2.5-flash";
 
-// Fix: Refactored to get API key from process.env.API_KEY instead of chrome.storage, per coding guidelines.
+// Refactored to get API key from process.env.API_KEY instead of chrome.storage, per coding guidelines.
 async function translateText(text) {
   const apiKey = process.env.API_KEY;
   if (!apiKey) {

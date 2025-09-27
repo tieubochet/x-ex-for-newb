@@ -116,3 +116,6 @@ observer.observe(document.body, {
 
 // Initial run
 setTimeout(processTweets, 1000);
+
+// Fix: Convert this script to a module to avoid global scope conflicts and redeclaration errors.
+export {};
