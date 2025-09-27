@@ -44,16 +44,34 @@
         }
 
         const textElement = tweetElement.querySelector('div[data-testid="tweetText"]');
-        
-        // Find the main tweet action bar by anchoring to the reply button for robustness.
-        const replyButton = tweetElement.querySelector('div[data-testid="reply"]');
-        if (!replyButton) return;
-
-        const actionBar = replyButton.closest('div[role="group"]');
-
-        if (!textElement || !actionBar || !textElement.innerText.trim()) {
+        if (!textElement || !textElement.innerText.trim()) {
             return;
         }
+
+        // --- NEW ROBUST SELECTOR LOGIC ---
+        // Find the action bar by looking for the 'Share' button's SVG icon path. This is much more stable than data-testid attributes.
+        const shareSvgPath = "M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.12 21 3 19.88 3 18.51V15h2v3.51c0 .28.22.49.5.49h12.98c.28 0 .5-.21.5-.49V15h2z";
+        const shareIcon = tweetElement.querySelector(`path[d="${shareSvgPath}"]`);
+
+        if (!shareIcon) {
+            return; // Can't find the insertion point
+        }
+
+        const actionBar = shareIcon.closest('div[role="group"]');
+        if (!actionBar) {
+            return;
+        }
+
+        // Find the specific wrapper of the share button that is a direct child of the action bar.
+        let shareButtonWrapper = shareIcon;
+        while (shareButtonWrapper.parentElement && shareButtonWrapper.parentElement !== actionBar) {
+            shareButtonWrapper = shareButtonWrapper.parentElement;
+        }
+
+        if (!shareButtonWrapper || shareButtonWrapper.parentElement !== actionBar) {
+            return; // Couldn't find the direct child wrapper.
+        }
+        // --- END OF NEW LOGIC ---
 
         const button = document.createElement('button');
         button.innerText = 'Translate';
@@ -101,15 +119,8 @@
         const buttonWrapper = document.createElement('div');
         buttonWrapper.appendChild(button);
 
-        // Find the share button to insert our button before it for a consistent position.
-        const shareButtonContainer = actionBar.querySelector('div[data-testid="share"]');
-        
-        if (shareButtonContainer) {
-            actionBar.insertBefore(buttonWrapper, shareButtonContainer);
-        } else {
-            // Fallback to appending at the end if the share button isn't found
-            actionBar.appendChild(buttonWrapper);
-        }
+        // Insert our button before the Share button's wrapper.
+        actionBar.insertBefore(buttonWrapper, shareButtonWrapper);
     };
 
     const processTweets = () => {
